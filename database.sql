@@ -48,3 +48,5 @@ CREATE TABLE offer_proposal(
     created_at DATE
 
 )
+
+ALTER TABLE supports ALTER COLUMN support_id SET NOT NULL
