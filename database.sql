@@ -1,4 +1,3 @@
--- Active: 1746729928632@@127.0.0.1@5432@Bartering
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
     phone_number VARCHAR(11) NOT NULL,
