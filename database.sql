@@ -62,9 +62,17 @@ ALTER TABLE users ALTER COLUMN password SET NOT NULL
 
 
 CREATE TABLE comments(
-    comment_id INTEGER PRIMARY KEY,
+    comment_id SERIAL PRIMARY KEY,
     author_id INTEGER NOT NULL REFERENCES users(user_id),
     parent_id INTEGER REFERENCES comments(comment_id),
     created_at DATE,
     text TEXT
+)
+
+
+
+CREATE TABLE category(
+    category_id SERIAL PRIMARY KEY,
+    title VARCHAR(30),
+    description TEXT
 )
