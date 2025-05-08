@@ -59,3 +59,12 @@ ALTER TABLE messages ALTER COLUMN receiver SET NOT NULL
 ALTER TABLE currencies ALTER COLUMN description SET NOT NULL
 
 ALTER TABLE users ALTER COLUMN password SET NOT NULL
+
+
+CREATE TABLE comments(
+    comment_id INTEGER PRIMARY KEY,
+    author_id INTEGER NOT NULL REFERENCES users(user_id),
+    parent_id INTEGER REFERENCES comments(comment_id),
+    created_at DATE,
+    text TEXT
+)
