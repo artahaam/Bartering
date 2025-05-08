@@ -69,7 +69,8 @@ CREATE TABLE comments(
     text TEXT
 )
 
-CREATE TABLE category(
+
+CREATE TABLE categories(
     category_id SERIAL PRIMARY KEY,
     title VARCHAR(30),
     description TEXT
@@ -78,4 +79,9 @@ CREATE TABLE category(
 CREATE TABLE comments_offers(
     comment_id INTEGER NOT NULL REFERENCES comments(comment_id),
     offer_id INTEGER NOT NULL REFERENCES offers(offer_id)
+)
+
+CREATE TABLE currencies_categories(
+    currency_id INTEGER REFERENCES currencies(currency_id),
+    category_id INTEGER REFERENCES categories(category_id)
 )
