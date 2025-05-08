@@ -50,3 +50,9 @@ CREATE TABLE offer_proposal(
 )
 
 ALTER TABLE supports ALTER COLUMN support_id SET NOT NULL
+
+ALTER TABLE messages ALTER COLUMN message_id SET NOT NULL
+
+ALTER TABLE messages ALTER COLUMN sender SET NOT NULL
+
+ALTER TABLE messages ALTER COLUMN receiver SET NOT NULL
