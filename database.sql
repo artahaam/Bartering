@@ -32,3 +32,11 @@ CREATE TABLE offers(
     date DATE,
     type VARCHAR(30)
 )
+
+CREATE TABLE messages(
+    message_id SERIAL PRIMARY KEY,
+    sender INTEGER REFERENCES users(user_id),
+    receiver INTEGER REFERENCES users(user_id),
+    text TEXT,
+    date DATE
+)
