@@ -69,10 +69,13 @@ CREATE TABLE comments(
     text TEXT
 )
 
-
-
 CREATE TABLE category(
     category_id SERIAL PRIMARY KEY,
     title VARCHAR(30),
     description TEXT
+)
+
+CREATE TABLE comments_offers(
+    comment_id INTEGER NOT NULL REFERENCES comments(comment_id),
+    offer_id INTEGER NOT NULL REFERENCES offers(offer_id)
 )
