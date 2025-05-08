@@ -40,3 +40,11 @@ CREATE TABLE messages(
     text TEXT,
     date DATE
 )
+
+CREATE TABLE offer_proposal(
+    proposer_id INTEGER NOT NULL REFERENCES users(user_id),
+    offer_id INTEGER NOT NULL REFERENCES offers(offer_id),
+    proposed_currency INTEGER REFERENCES currencies(currency_id),
+    created_at DATE
+
+)
