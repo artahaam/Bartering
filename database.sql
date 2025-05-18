@@ -88,4 +88,4 @@ CREATE TABLE currencies_categories(
 
 ALTER TABLE comments ADD COLUMN offer_id INTEGER REFERENCES offers(offer_id)
 
-ALTER TABLE comments ALTER COLUMN offer_id SET NOT NULL 
+ALTER TABLE comments ALTER COLUMN offer_id SET NOT NULL;
