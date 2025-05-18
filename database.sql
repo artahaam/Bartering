@@ -5,11 +5,11 @@ CREATE TABLE users(
     last_name VARCHAR(50),
     gender VARCHAR(10),
     age INTEGER,
-    password VARCHAR(255)
+    password NOT NULL VARCHAR(255)
 )
 
 CREATE TABLE supports(
-    support_id INTEGER REFERENCES users(user_id),
+    support_id INTEGER NOT NULL REFERENCES users(user_id),
     email VARCHAR(50) NOT NULL UNIQUE,
     job_description TEXT
 )
@@ -34,8 +34,8 @@ CREATE TABLE offers(
 
 CREATE TABLE messages(
     message_id SERIAL PRIMARY KEY,
-    sender INTEGER REFERENCES users(user_id),
-    receiver INTEGER REFERENCES users(user_id),
+    sender INTEGER NOT NULL REFERENCES users(user_id),
+    receiver INTEGER NOT NULL REFERENCES users(user_id),
     text TEXT,
     date DATE
 )
@@ -47,19 +47,6 @@ CREATE TABLE offer_proposal(
     created_at DATE
 
 )
-
-ALTER TABLE supports ALTER COLUMN support_id SET NOT NULL
-
-ALTER TABLE messages ALTER COLUMN message_id SET NOT NULL
-
-ALTER TABLE messages ALTER COLUMN sender SET NOT NULL
-
-ALTER TABLE messages ALTER COLUMN receiver SET NOT NULL
-
-ALTER TABLE currencies ALTER COLUMN description SET NOT NULL
-
-ALTER TABLE users ALTER COLUMN password SET NOT NULL
-
 
 CREATE TABLE comments(
     comment_id SERIAL PRIMARY KEY,
@@ -85,7 +72,3 @@ CREATE TABLE currencies_categories(
     currency_id INTEGER REFERENCES currencies(currency_id),
     category_id INTEGER REFERENCES categories(category_id)
 )
-
-ALTER TABLE comments ADD COLUMN offer_id INTEGER REFERENCES offers(offer_id)
-
-ALTER TABLE comments ALTER COLUMN offer_id SET NOT NULL;
