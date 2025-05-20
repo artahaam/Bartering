@@ -1,5 +1,5 @@
 CREATE TABLE users(
-    user_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     phone_number VARCHAR(11) NOT NULL,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
@@ -9,13 +9,13 @@ CREATE TABLE users(
 )
 
 CREATE TABLE supports(
-    support_id INTEGER NOT NULL REFERENCES users(user_id),
+    id INTEGER NOT NULL REFERENCES users(id),
     email VARCHAR(50) NOT NULL UNIQUE,
     job_description TEXT
 )
 
 CREATE TABLE currencies(
-    currency_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     is_item BOOLEAN NOT NULL,
     is_service BOOLEAN NOT NULL,
     name VARCHAR(30),
@@ -23,52 +23,55 @@ CREATE TABLE currencies(
 )
 
 CREATE TABLE offers(
-    offer_id SERIAL PRIMARY KEY,
-    offerd_by INTEGER REFERENCES users(user_id),
-    accepted_by INTEGER REFERENCES users(user_id),
-    to_get INTEGER REFERENCES currencies(currency_id),
-    to_give INTEGER REFERENCES currencies(currency_id),
+    id SERIAL PRIMARY KEY,
+    offerd_by INTEGER REFERENCES users(id),
+    accepted_by INTEGER REFERENCES users(id),
+    to_get INTEGER REFERENCES currencies(id),
+    to_give INTEGER REFERENCES currencies(id),
     date DATE,
     type VARCHAR(30)
 )
 
 CREATE TABLE messages(
-    message_id SERIAL PRIMARY KEY,
-    sender INTEGER NOT NULL REFERENCES users(user_id),
-    receiver INTEGER NOT NULL REFERENCES users(user_id),
+    id SERIAL PRIMARY KEY,
+    sender INTEGER NOT NULL REFERENCES users(id),
+    receiver INTEGER NOT NULL REFERENCES users(id),
     text TEXT,
     date DATE
 )
 
 CREATE TABLE offer_proposal(
-    proposer_id INTEGER NOT NULL REFERENCES users(user_id),
-    offer_id INTEGER NOT NULL REFERENCES offers(offer_id),
-    proposed_currency INTEGER REFERENCES currencies(currency_id),
+    id SERIAL PRIMARY KEY,
+    proposer_id INTEGER NOT NULL REFERENCES users(id),
+    offer_id INTEGER NOT NULL REFERENCES offers(id),
+    proposed_currency INTEGER REFERENCES currencies(id),
     created_at DATE
 
 )
 
 CREATE TABLE comments(
-    comment_id SERIAL PRIMARY KEY,
-    author_id INTEGER NOT NULL REFERENCES users(user_id),
-    parent_id INTEGER REFERENCES comments(comment_id),
+    id SERIAL PRIMARY KEY,
+    author_id INTEGER NOT NULL REFERENCES users(id),
+    parent_id INTEGER REFERENCES comments(id),
     created_at DATE,
     text TEXT
 )
 
 
 CREATE TABLE categories(
-    category_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(30),
     description TEXT
 )
 
 CREATE TABLE comments_offers(
-    comment_id INTEGER NOT NULL REFERENCES comments(comment_id),
-    offer_id INTEGER NOT NULL REFERENCES offers(offer_id)
+    id SERIAL PRIMARY KEY,
+    comment_id INTEGER NOT NULL REFERENCES comments(id),
+    offer_id INTEGER NOT NULL REFERENCES offers(id)
 )
 
 CREATE TABLE currencies_categories(
-    currency_id INTEGER REFERENCES currencies(currency_id),
-    category_id INTEGER REFERENCES categories(category_id)
+    id SERIAL PRIMARY KEY,
+    id INTEGER REFERENCES currencies(id),
+    category_id INTEGER REFERENCES categories(id)
 )
