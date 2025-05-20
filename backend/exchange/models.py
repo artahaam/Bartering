@@ -34,8 +34,8 @@ class Offer(models.Model):
     status = models.CharField(_('وضعیت'), max_length=20, choices=Status, default=Status.OPEN)
     title = models.CharField(_('عنوان'), max_length=120)
     description = models.TextField(_('توضیحات'))
-    to_give = models.ForeignKey(_('عرضه'), Currency, related_name="offers_to_give", on_delete=models.SET_NULL, null=True)
-    to_get = models.ForeignKey(_('تقاضا'), Currency, related_name="offers_to_get",  on_delete=models.SET_NULL, null=True)
+    to_give = models.ForeignKey(Currency, related_name="offers_to_give", on_delete=models.SET_NULL, null=True, verbose_name=_('عرضه'))
+    to_get = models.ForeignKey(Currency, related_name="offers_to_get",  on_delete=models.SET_NULL, null=True, verbose_name=_('تقاضا'))
     created_at = models.DateTimeField(_('ایجاد شده در'), auto_now_add=True)
 
 
