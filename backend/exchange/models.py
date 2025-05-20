@@ -4,25 +4,24 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Currency(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    is_item = models.BooleanField(default=True)
-    is_service = models.BooleanField(default=False)
+    name = models.CharField(_('نام'), max_length=100)
+    description = models.TextField(_('توضیحات'), blank=True)
+    is_item = models.BooleanField(_('کالا'), default=True)
+    is_service = models.BooleanField(_('خدمات'), default=False)
     
 
 class Offer(models.Model):
     
-    
     class Status(models.TextChoices):
         OPEN = ('open', _('فعال'))
+        DONE = ('matched', _('انجام شده'))
         CLOSED = ('closed', _('غیرفعال'))
         
-        
-    offered_by = models.ForeignKey(User, related_name="offers", on_delete=models.CASCADE)
-    accepted_by = models.ForeignKey(User, related_name="accepted", on_delete=models.SET_NULL)
-    status = models.CharField(max_length=20, default="open")
-    title = models.CharField(max_length=120)
-    description = models.TextField()
-    to_give = models.ForeignKey(Currency, related_name="offers_to_give", on_delete=models.SET_NULL, null=True)
-    to_get = models.ForeignKey(Currency, related_name="offers_to_get",  on_delete=models.SET_NULL, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    offered_by = models.ForeignKey(User, related_name="offers", on_delete=models.CASCADE, verbose_name=_('پیشنهاد دهنده'))
+    accepted_by = models.ForeignKey(User, related_name="accepted", on_delete=models.SET_NULL, verbose_name=_('پذیرنده'))
+    status = models.CharField(_('وضعیت'), max_length=20, choices=Status, default=Status.OPEN)
+    title = models.CharField(_('عنوان'), max_length=120)
+    description = models.TextField(_('توضیحات'))
+    to_give = models.ForeignKey(_('عرضه'), Currency, related_name="offers_to_give", on_delete=models.SET_NULL, null=True)
+    to_get = models.ForeignKey(_('تقاضا'), Currency, related_name="offers_to_get",  on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(_('ایجاد شده در'), auto_now_add=True)
