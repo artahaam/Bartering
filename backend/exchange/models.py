@@ -29,8 +29,8 @@ class Offer(models.Model):
         DONE = ('matched', _('انجام شده'))
         CLOSED = ('closed', _('غیرفعال'))
         
-    offered_by = models.ForeignKey(User, related_name="offers", on_delete=models.CASCADE, verbose_name=_('پیشنهاد دهنده'))
-    accepted_by = models.ForeignKey(User, related_name="accepted", on_delete=models.SET_NULL, verbose_name=_('پذیرنده'))
+    offered_by = models.ForeignKey(User, related_name="offers", on_delete=models.CASCADE, verbose_name=_('پیشنهاد دهنده'), null=True)
+    accepted_by = models.ForeignKey(User, related_name="accepted", on_delete=models.SET_NULL, verbose_name=_('پذیرنده'), null=True)
     status = models.CharField(_('وضعیت'), max_length=20, choices=Status, default=Status.OPEN)
     title = models.CharField(_('عنوان'), max_length=120)
     description = models.TextField(_('توضیحات'))
