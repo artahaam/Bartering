@@ -133,3 +133,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+LANGUAGE_CODE = 'fa'
+USE_I18N = True
+USE_L10N = True
