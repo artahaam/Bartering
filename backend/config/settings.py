@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'rest_framework',
+    
     'accounts',
     'exchange',
     'comments',
@@ -140,3 +142,12 @@ AUTH_USER_MODEL = 'accounts.User'
 LANGUAGE_CODE = 'fa'
 USE_I18N = True
 USE_L10N = True
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer', 
+    ),
+    'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata', 
+}
