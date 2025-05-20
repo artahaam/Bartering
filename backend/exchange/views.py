@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .models import Offer, Currency
 from .serializers import OfferSerializer, CurrencySerializer
-from permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 
 # Create your views here.
 class CurrencyViewSet(viewsets.ModelViewSet):

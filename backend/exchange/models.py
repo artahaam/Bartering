@@ -29,13 +29,39 @@ class Offer(models.Model):
         DONE = ('matched', _('انجام شده'))
         CLOSED = ('closed', _('غیرفعال'))
         
-    offered_by = models.ForeignKey(User, related_name="offers", on_delete=models.CASCADE, verbose_name=_('پیشنهاد دهنده'), null=True)
-    accepted_by = models.ForeignKey(User, related_name="accepted", on_delete=models.SET_NULL, verbose_name=_('پذیرنده'), null=True)
+    offered_by = models.ForeignKey(User,
+                                   related_name="offers",
+                                   on_delete=models.CASCADE,
+                                   verbose_name=_('پیشنهاد دهنده'),
+                                   null=True,
+                                   db_column="offered_by",
+                                   )
+    accepted_by = models.ForeignKey(User,
+                                    related_name="accepted",
+                                    on_delete=models.SET_NULL,
+                                    verbose_name=_('پذیرنده'),
+                                    null=True,
+                                    db_column="accepted_by",
+                                    )
     status = models.CharField(_('وضعیت'), max_length=20, choices=Status, default=Status.OPEN)
     title = models.CharField(_('عنوان'), max_length=120)
     description = models.TextField(_('توضیحات'))
-    to_give = models.ForeignKey(Currency, related_name="offers_to_give", on_delete=models.SET_NULL, null=True, verbose_name=_('عرضه'))
-    to_get = models.ForeignKey(Currency, related_name="offers_to_get",  on_delete=models.SET_NULL, null=True, verbose_name=_('تقاضا'))
+    
+    to_get = models.ForeignKey(Currency,
+                               related_name="offers_to_get",
+                               on_delete=models.SET_NULL,
+                               null=True,
+                               verbose_name=_('تقاضا'),
+                               db_column='to_get',
+                               )
+    
+    to_give = models.ForeignKey(Currency,
+                                related_name="offers_to_give",
+                                on_delete=models.SET_NULL,
+                                null=True,
+                                verbose_name=_('عرضه'),
+                                db_column='to_give'
+                                )
     created_at = models.DateTimeField(_('ایجاد شده در'), auto_now_add=True)
 
 

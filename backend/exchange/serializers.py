@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import OfferProposal, Offer, Currency
+from .models import OfferProposal, Offer, Currency
 from accounts.models import User
 
 

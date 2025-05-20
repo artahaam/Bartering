@@ -24,13 +24,14 @@ CREATE TABLE currencies(
 
 CREATE TABLE offers(
     id SERIAL PRIMARY KEY,
-    offerd_by INTEGER REFERENCES users(id),
+    offered_by INTEGER REFERENCES users(id),
     accepted_by INTEGER REFERENCES users(id),
     to_get INTEGER REFERENCES currencies(id),
     to_give INTEGER REFERENCES currencies(id),
     date DATE,
     type VARCHAR(30)
 )
+-- ALTER TABLE offers RENAME date TO created_at;
 
 CREATE TABLE messages(
     id SERIAL PRIMARY KEY,
@@ -39,6 +40,9 @@ CREATE TABLE messages(
     text TEXT,
     date DATE
 )
+-- ALTER TABLE offers ADD COLUMN description TEXT;
+
+
 
 CREATE TABLE offer_proposal(
     id SERIAL PRIMARY KEY,
@@ -75,3 +79,16 @@ CREATE TABLE currencies_categories(
     id INTEGER REFERENCES currencies(id),
     category_id INTEGER REFERENCES categories(id)
 )
+
+users
+-- currencies_categories
+-- currencies
+-- offers
+-- messages
+-- offer_proposal
+-- comments
+-- categories
+comments_offers
+
+ALTER TABLE comments_offers ALTER COLUMN id TYPE INTEGER;
+-- ALTER TABLE users RENAME user_id TO id;
