@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
 
     use_in_migrations = True
 
-    def _normalize_phone_number(phone_number:str):
+    def _normalize_phone_number(self, phone_number:str):
         return phone_number.replace(" ", "")
     
     
