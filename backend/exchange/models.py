@@ -7,6 +7,7 @@ class Currency(models.Model):
     
     class Meta:
         verbose_name = _('واحد تبادل')
+        verbose_name_plural = _('واحدهای تبادل')
         db_table = 'currencies'
         managed = False
     
@@ -20,6 +21,7 @@ class Currency(models.Model):
 class Offer(models.Model):
     class Meta:
         verbose_name = _('آگهی')
+        verbose_name_plural = _('آگهی‌ها')
         db_table = 'offers'
         managed = False
     
@@ -68,7 +70,8 @@ class Offer(models.Model):
 class OfferProposal(models.Model):
     
     class Meta:
-        verbose_name = _('آگهی‌های داری متقاضی')
+        verbose_name = _('آگهی‌ داری متقاضی')
+        verbose_name_plural = _('آگهی‌های دارای متقاضی')
         db_table = 'offer_proposal'
         managed = False
     
