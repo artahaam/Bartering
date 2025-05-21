@@ -63,6 +63,13 @@ class User(AbstractUser):
         null=False,
         blank=False
     )
+
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        blank=True,
+        null=True
+    )
         
     @property
     def full_name(self):
