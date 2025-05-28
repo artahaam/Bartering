@@ -77,10 +77,9 @@ class Offer(models.Model):
 class OfferProposal(models.Model):
     
     class Meta:
-        verbose_name = _('آگهی‌ داری متقاضی')
-        verbose_name_plural = _('آگهی‌های دارای متقاضی')
+        verbose_name = _('پیشنهاد آگهی')
+        verbose_name_plural = _('پیشنهادهای آگهی')
         db_table = 'offer_proposal'
-        managed = False
     
     
     offer_id = models.ForeignKey(Offer,
@@ -89,10 +88,12 @@ class OfferProposal(models.Model):
                                  related_name="proposals",
                                  verbose_name=_('شماره آگهی'))
     
+    
     proposer_id = models.ForeignKey(User,
                                     db_column="proposer_id",
-                                    on_delete=models.SET('null'),
+                                    on_delete=models.CASCADE,
                                     verbose_name=_('متقاضی'))
+    
     
     proposed_currency = models.ForeignKey(Currency,
                                         db_column="proposed_currency",
@@ -103,3 +104,5 @@ class OfferProposal(models.Model):
     
     created_at = models.DateTimeField(_('ایجاد شده در'), auto_now_add=True)
 
+    def __str__(self):
+        return f"Proposal by {self.proposer} on {self.offer.title}"
