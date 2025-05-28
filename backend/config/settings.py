@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # third-party apps
     'rest_framework',
+    'django-filter',
     
+    # apps
     'accounts',
     'exchange',
     'comments',
@@ -149,5 +152,12 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer', 
     ),
+    
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata', 
+    
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    )
 }
