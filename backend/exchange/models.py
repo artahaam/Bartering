@@ -77,19 +77,20 @@ class OfferProposal(models.Model):
     
     
     offer_id = models.ForeignKey(Offer,
+                                 db_column="offer_id",
                                  on_delete=models.CASCADE,
                                  related_name="proposals",
                                  verbose_name=_('شماره آگهی'))
     
     proposer_id = models.ForeignKey(User,
+                                    db_column="proposer_id",
                                     on_delete=models.SET('null'),
                                     verbose_name=_('متقاضی'))
     
     proposed_currency = models.ForeignKey(Currency,
-                                          null=True,
-                                          blank=True,
-                                        #   on_delete=models.SET(Currency.objects.get(Offer.objects.get(offer_id=offer_id)['to_get']),
-                                        #   on_delete=models.SET('null'),
+                                        db_column="proposed_currency",
+                                        null=True,
+                                        blank=True,
                                         on_delete=models.SET_NULL,
                                         verbose_name=_('واحد پیشنهادی'))
     
