@@ -18,10 +18,10 @@ class CurrencySerializer(serializers.ModelSerializer):
 class OfferSerializer(serializers.ModelSerializer):
     to_give = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all(), write_only=True)
     to_get = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all(), write_only=True)
-    offered_by = serializers.PrimaryKeyRelatedField(read_only=True)
-    accepted_by = serializers.PrimaryKeyRelatedField(read_only=True)
     to_give_details = CurrencySerializer(source='to_give', read_only=True)
     to_get_details = CurrencySerializer(source='to_get', read_only=True)
+    offered_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    accepted_by = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Offer
         fields = [
@@ -37,7 +37,6 @@ class OfferSerializer(serializers.ModelSerializer):
             'to_get_details',
             'created_at',
         ]
-
 
 class OfferProposalSerializer(serializers.ModelSerializer):
     proposer_id = serializers.PrimaryKeyRelatedField(read_only=True)
