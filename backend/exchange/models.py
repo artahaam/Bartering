@@ -17,6 +17,10 @@ class Currency(models.Model):
     is_item = models.BooleanField(_('کالا'), default=True)
     is_service = models.BooleanField(_('خدمات'), default=False)
     
+    
+    def __str__(self):
+        return self.name
+
 
 class Offer(models.Model):
     class Meta:
@@ -65,6 +69,9 @@ class Offer(models.Model):
                                 db_column='to_give'
                                 )
     created_at = models.DateTimeField(_('ایجاد شده در'), auto_now_add=True)
+
+    def __str__(self):
+        return self.title
 
 
 class OfferProposal(models.Model):
