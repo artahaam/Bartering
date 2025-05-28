@@ -1,6 +1,10 @@
 pg_schema.sql
 steps.md
 venv/
+bartering_data.sql
+bartering_data2.sql
+database_schema.sql
+database_schema copy.sql
 
 .venv/
 .perfume-online-shop/
