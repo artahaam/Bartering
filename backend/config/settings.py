@@ -161,3 +161,17 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     )
 }
+
+# settings.py
+
+# Add your React app's URL to allowed hosts
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-react-app-domain.com']
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Default React dev server
+    "https://your-react-app-domain.com",
+]
+
+# If using session authentication
+CORS_ALLOW_CREDENTIALS = True

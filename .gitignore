@@ -5,6 +5,11 @@ bartering_data.sql
 bartering_data2.sql
 database_schema.sql
 database_schema copy.sql
+node_modules/
+frontend/
+directory.txt
+package-lock.json
+package.json
 
 .venv/
 .perfume-online-shop/

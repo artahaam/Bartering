@@ -85,7 +85,7 @@ class OfferProposalCreateSerializer(serializers.ModelSerializer):
         if offer.status != Offer.Status.OPEN:
              raise serializers.ValidationError(_("این آگهی دیگر فعال نیست."))
 
-        if OfferProposal.objects.filter(offer=offer, proposer=request.user).exists():
+        if OfferProposal.objects.filter(offer_id=offer, proposer_id=request.user).exists():
             raise serializers.ValidationError(_("شما قبلا برای این آگهی پیشنهاد داده‌اید."))
 
         return data
@@ -96,8 +96,8 @@ class OfferProposalCreateSerializer(serializers.ModelSerializer):
         proposer = self.context['request'].user
 
         proposal = OfferProposal.objects.create(
-            offer=offer,
-            proposer=proposer,
+            offer_id=offer,
+            proposer_id=proposer,
             **validated_data
         )
         return proposal

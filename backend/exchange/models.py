@@ -47,6 +47,7 @@ class Offer(models.Model):
                                     on_delete=models.SET_NULL,
                                     verbose_name=_('پذیرنده'),
                                     null=True,
+                                    blank=True,
                                     db_column="accepted_by",
                                     )
     status = models.CharField(_('وضعیت'), max_length=20, choices=Status, default=Status.OPEN)

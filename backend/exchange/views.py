@@ -27,29 +27,41 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 #     def perform_create(self, serializer):
 #         serializer.save(offered_by=self.request.user)
 
+# backend/exchange/views.py
+# ... (other imports) ...
+from .serializers import OfferSerializer, CurrencySerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer # Ensure all are imported
+
+# ... CurrencyViewSet ...
 
 class OfferViewSet(viewsets.ModelViewSet):
     queryset = Offer.objects.all()
-    serializer_class = OfferSerializer
+    # serializer_class = OfferSerializer # Keep this as default for standard actions
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     filterset_class = OfferFilter
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'title']
     ordering = ['-created_at']
 
-    def perform_create(self, serializer):
+    # --- ADD THIS METHOD ---
+    def get_serializer_class(self):
+        if self.action == 'propose':
+            return OfferProposalCreateSerializer
+        elif self.action == 'proposals': # If you want to use OfferProposalViewSerializer for the list
+            return OfferProposalViewSerializer
+        return OfferSerializer # Default for list, retrieve, create, update, etc.
+    # --- END OF ADDED METHOD ---
+
+    def perform_create(self, serializer): # This uses OfferSerializer
         serializer.save(offered_by=self.request.user)
 
-
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=True, methods=['post']
+            , permission_classes=[permissions.IsAuthenticated]
+            )
     def propose(self, request, pk=None):
-        
-        offer = self.get_object() 
-      
+        offer = self.get_object()
         context = {'request': request, 'offer': offer}
-
-        serializer = OfferProposalCreateSerializer(data=request.data, context=context)
-
+        # The serializer instance will now be correctly inferred by DRF for form rendering too
+        serializer = self.get_serializer(data=request.data, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -59,10 +71,10 @@ class OfferViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def proposals(self, request, pk=None):
         offer = self.get_object()
-        
         if offer.offered_by != request.user:
             return Response({"detail": "Not authorized to view proposals."}, status=status.HTTP_403_FORBIDDEN)
-
-        proposals = offer.proposals.all() 
-        serializer = OfferProposalViewSerializer(proposals, many=True)
+        
+        proposals_queryset = offer.proposals.all()
+        # Use get_serializer for consistency
+        serializer = self.get_serializer(proposals_queryset, many=True)
         return Response(serializer.data)
