@@ -40,24 +40,32 @@ class UserManager(BaseUserManager):
 
 phone_validator = phone_validator = RegexValidator(
         regex=r"^09\d{9}$",
-        message=_("Phone number must be an 11-digit number starting with '09'.")
+        message=_("شماره وارد شده معتبر نیست")
     )
 
 student_id_validator = RegexValidator(
         regex=r"^40\d{7}$",
-        message=_("Student ID must be a 9-digit number starting with '40'.")
+        message=_("شماره دانشجویی معتبر نیست")
 )
 
 
 class User(AbstractUser):
     
     phone_number = models.CharField(
-        _("phone number"),
+        _("شماره تلفن"),
         validators=[phone_validator],
         max_length=13,
         unique=True,
         null=False,
         blank=False
+    )
+    
+    student_id = models.CharField(
+        _("شماره دانشجویی"),
+        max_length=9,
+        unique=True,
+        validators=[student_id_validator],
+        help_text=_("الزامی است، شروع با 40"),
     )
 
     username = models.CharField(
