@@ -80,6 +80,7 @@ class OfferProposal(models.Model):
         verbose_name = _('پیشنهاد آگهی')
         verbose_name_plural = _('پیشنهادهای آگهی')
         db_table = 'offer_proposal'
+        managed = False
     
     
     offer_id = models.ForeignKey(Offer,
