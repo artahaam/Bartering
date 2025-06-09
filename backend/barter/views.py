@@ -2,15 +2,15 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters, status 
 from rest_framework.decorators import action 
 from rest_framework.response import Response
-from .serializers import OfferSerializer, CurrencySerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer
+from .serializers import OfferSerializer, TradeableSerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer
 from .permissions import IsOwnerOrReadOnly
 from .filters import OfferFilter
-from .models import Currency, Offer
+from .models import Tradeable, Offer
 
 
-class CurrencyViewSet(viewsets.ModelViewSet):
-    queryset = Currency.objects.all()
-    serializer_class = CurrencySerializer
+class TradeableViewSet(viewsets.ModelViewSet):
+    queryset = Tradeable.objects.all()
+    serializer_class = TradeableSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
 
@@ -27,11 +27,11 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 #     def perform_create(self, serializer):
 #         serializer.save(offered_by=self.request.user)
 
-# backend/exchange/views.py
+# backend/barter/views.py
 # ... (other imports) ...
-from .serializers import OfferSerializer, CurrencySerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer # Ensure all are imported
+from .serializers import OfferSerializer, TradeableSerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer # Ensure all are imported
 
-# ... CurrencyViewSet ...
+# ... TradeableViewSet ...
 
 class OfferViewSet(viewsets.ModelViewSet):
     queryset = Offer.objects.all()

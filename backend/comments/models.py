@@ -1,5 +1,5 @@
 from django.db import models
-from exchange.models import Offer
+from barter.models import Offer
 # from accounts.models import 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _ 

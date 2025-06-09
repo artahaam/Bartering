@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     
     # apps
     'accounts',
-    'exchange',
+    'barter',
     'comments',
     
     

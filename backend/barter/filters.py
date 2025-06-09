@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Offer, Currency
+from .models import Offer, Tradeable
 
 class OfferFilter(filters.FilterSet):
     title = filters.CharFilter(field_name='title', lookup_expr='icontains')
