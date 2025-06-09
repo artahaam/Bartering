@@ -6,18 +6,19 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 
-
-
 class UserManager(BaseUserManager):
 
     def _normalize_phone_number(self, phone_number:str):
-        return phone_number.replace(" ", "")
+        phone_number.replace(" ", "")
+        if phone_number.startswith('+98'):
+            phone_number = '0' + phone_number[3:]
+        return phone_number
     
 
     def create_user(self, phone_number, password, **extra_fields):
 
         if not phone_number:
-            raise ValueError(_("The phone_number must be set"))
+            raise ValueError(_("شماره تلفن الزامی است"))
         phone_number = self._normalize_phone_number(phone_number)
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
@@ -36,10 +37,15 @@ class UserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(phone_number, password, **extra_fields)
 
-phone_validator = RegexValidator(
-    regex=r"^(\+98|0)\s?([1-8]\d{9}|9\d{9})$",
-    message="Phone number must be entered in the format: "
-    "'+989xxxxxxxxx'. Up to 14 digits allowed.",
+
+phone_validator = phone_validator = RegexValidator(
+        regex=r"^09\d{9}$",
+        message=_("Phone number must be an 11-digit number starting with '09'.")
+    )
+
+student_id_validator = RegexValidator(
+        regex=r"^40\d{7}$",
+        message=_("Student ID must be a 9-digit number starting with '40'.")
 )
 
 
@@ -67,7 +73,7 @@ class User(AbstractUser):
 
     
     def __str__(self):
-        return f'{self.full_name}'
+        return f'{self.phone_number}'
     
     USERNAME_FIELD = "phone_number"
     
