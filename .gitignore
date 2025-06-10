@@ -10,6 +10,7 @@ frontend/
 directory.txt
 package-lock.json
 package.json
+backend/media/
 
 .venv/
 .perfume-online-shop/
