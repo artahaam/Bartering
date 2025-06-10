@@ -2,11 +2,10 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters, status 
 from rest_framework.decorators import action 
 from rest_framework.response import Response
-from .serializers import OfferSerializer, TradeableSerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer
+from .serializers import OfferSerializer, TradeableSerializer, ProposalCreateSerializer, ProposalDetailSerializer
 from .permissions import IsOwnerOrReadOnly
 from .filters import OfferFilter
-from .models import Tradeable, Offer
-
+from .models import Tradeable, Offer, Proposal
 
 class TradeableViewSet(viewsets.ModelViewSet):
     queryset = Tradeable.objects.all()
@@ -14,67 +13,106 @@ class TradeableViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
 
-# class OfferViewSet(viewsets.ModelViewSet):
-#     queryset = Offer.objects.all()
-#     serializer_class = OfferSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-#     filterset_class = OfferFilter
-    
-#     search_fields = ['title', 'description']
-#     ordering_fields = ['created_at', 'title']
-#     ordering = ['-created_at']
-
-#     def perform_create(self, serializer):
-#         serializer.save(offered_by=self.request.user)
-
-# backend/barter/views.py
-# ... (other imports) ...
-from .serializers import OfferSerializer, TradeableSerializer, OfferProposalCreateSerializer, OfferProposalViewSerializer # Ensure all are imported
-
-# ... TradeableViewSet ...
-
 class OfferViewSet(viewsets.ModelViewSet):
-    queryset = Offer.objects.all()
-    # serializer_class = OfferSerializer # Keep this as default for standard actions
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    queryset = Offer.objects.filter(status='open').order_by('-created_at')
+    serializer_class = OfferSerializer
+    permission_classes = [IsOwnerOrReadOnly]
     filterset_class = OfferFilter
-    search_fields = ['title', 'description']
+    search_fields = ['title', 'description', 'to_get__name', 'to_give__name',]
     ordering_fields = ['created_at', 'title']
     ordering = ['-created_at']
 
-    # --- ADD THIS METHOD ---
-    def get_serializer_class(self):
-        if self.action == 'propose':
-            return OfferProposalCreateSerializer
-        elif self.action == 'proposals': # If you want to use OfferProposalViewSerializer for the list
-            return OfferProposalViewSerializer
-        return OfferSerializer # Default for list, retrieve, create, update, etc.
-    # --- END OF ADDED METHOD ---
-
-    def perform_create(self, serializer): # This uses OfferSerializer
-        serializer.save(offered_by=self.request.user)
-
-    @action(detail=True, methods=['post']
-            , permission_classes=[permissions.IsAuthenticated]
-            )
-    def propose(self, request, pk=None):
-        offer = self.get_object()
-        context = {'request': request, 'offer': offer}
-        # The serializer instance will now be correctly inferred by DRF for form rendering too
-        serializer = self.get_serializer(data=request.data, context=context)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+    
+    @action(detail=True, methods=['get'])
     def proposals(self, request, pk=None):
         offer = self.get_object()
-        if offer.offered_by != request.user:
-            return Response({"detail": "Not authorized to view proposals."}, status=status.HTTP_403_FORBIDDEN)
+        proposals = offer.proposals.all()
         
-        proposals_queryset = offer.proposals.all()
-        # Use get_serializer for consistency
-        serializer = self.get_serializer(proposals_queryset, many=True)
+        context = {'request': request}
+        serializer = ProposalDetailSerializer(proposals, many=True, context=context)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def propose(self, request, pk=None):
+        offer = self.get_object()
+        
+        if offer.status == Offer.Status.CLOSED:
+            return Response({"detail": "Offer is no longer open."}, status=status.HTTP_400_BAD_REQUEST)
+        # pass the status to the context so you can update the proposal's status in the serializer
+        context = {'request': request, 'offer': offer}
+        serializer = ProposalCreateSerializer(data=request.data, context=context)
+        
+        serializer.is_valid(raise_exception=True)
+        new_proposal = serializer.save()
+
+        read_serializer = ProposalDetailSerializer(new_proposal, context={'request': request})
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+
+
+    
+class ProposalViewSet(viewsets.ReadOnlyModelViewSet):
+
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    @action(methods=['post'], detail=True)
+    def accept(self, request, pk=None):
+        proposal = self.get_object()
+        offer = proposal.offer
+        
+        if offer.owner != request.user:
+            return Response(
+                {'detail': 'You do not have permission to perform this action.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if offer.status != Offer.Status.OPEN:
+            return Response(
+                {'detail': 'This offer is already closed.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        proposal.status = Proposal.Status.ACCEPTED
+        proposal.save()
+
+
+        # A better system should handle the status
+        # ignored for now        
+        offer.status = Offer.Status.CLOSED
+        offer.save()
+
+        offer.proposals.filter(status=Proposal.Status.PENDING).update(status=Proposal.Status.DECLINED)
+
+        return Response({'status': 'proposal accepted and offer closed'})
+
+    
+    @action(methods=['post'], detail=True)
+    def decline(self, request, pk=None):
+        proposal = self.get_object()
+        offer = proposal.offer
+        
+        if offer.owner != request.user:
+            return Response(
+                {'detail': 'You do not have permission to perform this action.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if offer.status != Offer.Status.OPEN:
+            return Response(
+                {'detail': 'This offer is already closed.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        proposal.status = Proposal.Status.DECLINED
+        proposal.save()
+
+        return Response({'status': 'proposal declined'})
+
+# class OfferViewSet(viewsets.ModelViewSet):
+#     queryset = Offer.objects.all()
+#     # serializer_class = OfferSerializer # Keep this as default for standard actions
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+

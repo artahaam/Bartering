@@ -29,3 +29,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
         )
         return user
         
+        
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'phone_number', 
+            'email', 
+            'student_id', 
+            'first_name', 
+            'last_name',
+            'full_name', 
+        ]
+        read_only_fields = ['phone_number', 'student_id', 'full_name']

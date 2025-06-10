@@ -18,8 +18,8 @@ class Tradeable(models.Model):
     name = models.CharField(_('نام'), max_length=100)
     description = models.TextField(_('توضیحات'), blank=True)
     type = models.CharField(_('کالا'), max_length=15, choices=Type, default=Type.ITEM)
-    
-    
+    image = models.ImageField(_('عکس'), upload_to='tradeables/', blank=True, null=True)
+
     def __str__(self):
         return self.name
 
@@ -33,11 +33,11 @@ class Offer(models.Model):
     
     class Status(models.TextChoices):
         OPEN = ('open', _('فعال'))
-        DONE = ('matched', _('انجام شده'))
+        DONE = ('done', _('انجام شده'))
         CLOSED = ('closed', _('غیرفعال'))
         
         
-    offered_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    related_name="offers",
                                    on_delete=models.CASCADE,
                                    verbose_name=_('پیشنهاد دهنده'),
@@ -79,9 +79,9 @@ class Proposal(models.Model):
     
 
     class Status(models.TextChoices):
-        PENDING = 'PENDING', _('انتظار')
-        ACCEPTED = 'ACCEPTED', _('پذیرفته شده')
-        DECLINED = 'DECLINED', _('رد شده')
+        PENDING = 'pending', _('انتظار')
+        ACCEPTED = 'accepted', _('پذیرفته شده')
+        DECLINED = 'declined', _('رد شده')
 
 
     offer = models.ForeignKey(Offer,

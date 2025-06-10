@@ -8,37 +8,81 @@ class TradeableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tradeable
         fields = [
-            'id',
             'name',
             'description',
             'type',
+            'image',
         ]
 
 
 class OfferSerializer(serializers.ModelSerializer):
-    to_give = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
-    to_get = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
-    to_give_details = TradeableSerializer(source='to_give', read_only=True)
-    to_get_details = TradeableSerializer(source='to_get', read_only=True)
-    offered_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    # to_give = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
+    # to_get = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
+    to_give = TradeableSerializer()
+    to_get = TradeableSerializer()
+    # to_give_details = TradeableSerializer(source='to_give', read_only=True)
+    # to_get_details = TradeableSerializer(source='to_get', read_only=True)
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Offer
         fields = [
             'id',
-            'offered_by',
+            'owner',
             'status',
             'title',
             'description',
             'to_give',
             'to_get',
-            'to_give_details',
-            'to_get_details',
+            # 'to_give_details',
+            # 'to_get_details',
             'created_at',
         ]
+    def create(self, validated_data):
+        
+        to_give_data = validated_data.pop('to_give')
+        to_get_data = validated_data.pop('to_get')
 
-class ProposalSerializer(serializers.ModelSerializer):
-    proposer = serializers.PrimaryKeyRelatedField(read_only=True)
-    offer = serializers.PrimaryKeyRelatedField(read_only=True)
+        to_give = Tradeable.objects.create(**to_give_data)
+        to_get = Tradeable.objects.create(**to_get_data)
+
+        offer = Offer.objects.create(
+            to_give=to_give,
+            to_get=to_get,
+            **validated_data
+        )
+        return offer
+    
+    
+    def update(self, instance, validated_data):
+
+        to_give_data = validated_data.pop('to_give', None)
+        to_get_data = validated_data.pop('to_get', None)
+
+        if to_give_data:
+            to_give_instance = instance.to_give
+            for attr, value in to_give_data.items():
+                setattr(to_give_instance, attr, value)
+            to_give_instance.save()
+
+        if to_get_data:
+            to_get_instance = instance.to_get
+            for attr, value in to_get_data.items():
+                setattr(to_get_instance, attr, value)
+            to_get_instance.save()
+
+        instance = super().update(instance, validated_data)
+        return instance
+
+
+class ProposalDetailSerializer(serializers.ModelSerializer):
+    proposer = serializers.HyperlinkedRelatedField(
+        view_name='accounts:user-detail',
+        read_only=True
+    )
+    offer = serializers.HyperlinkedRelatedField(
+        view_name='barter:offer-detail',
+        read_only=True
+    )
     proposed_tradeable = TradeableSerializer(read_only=True)
 
     class Meta:
@@ -48,16 +92,14 @@ class ProposalSerializer(serializers.ModelSerializer):
             'offer',
             'proposer',
             'proposed_tradeable',
+            'status',
             'created_at',
         ]
 
 
-class OfferProposalCreateSerializer(serializers.ModelSerializer):
+class ProposalCreateSerializer(serializers.ModelSerializer):
     
-    proposed_tradeable = serializers.PrimaryKeyRelatedField(
-        queryset=Tradeable.objects.all(),
-        required=True 
-    )
+    proposed_tradeable = TradeableSerializer()
 
     class Meta:
         model = Proposal
@@ -67,11 +109,11 @@ class OfferProposalCreateSerializer(serializers.ModelSerializer):
         
         offer = self.context.get('offer')
         request = self.context.get('request')
-
+        
         if not offer or not request:
             raise serializers.ValidationError("Serializer requires 'offer' and 'request' in context.")
 
-        if offer.offered_by == request.user:
+        if offer.owner == request.user:
             raise serializers.ValidationError(_("شما نمی‌توانید به آگهی خودتان پیشنهاد دهید."))
 
         if offer.status != Offer.Status.OPEN:
@@ -83,6 +125,9 @@ class OfferProposalCreateSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        # add status
+        proposed_tradeable_data = validated_data.pop('proposed_tradeable')
+        proposed_tradeable = Tradeable.objects.create(**proposed_tradeable_data)
 
         offer = self.context['offer']
         proposer = self.context['request'].user
@@ -90,14 +135,8 @@ class OfferProposalCreateSerializer(serializers.ModelSerializer):
         proposal = Proposal.objects.create(
             offer=offer,
             proposer=proposer,
+            proposed_tradeable=proposed_tradeable,
             **validated_data
         )
         return proposal
 
-class OfferProposalViewSerializer(serializers.ModelSerializer):
-    proposer = serializers.StringRelatedField() 
-    proposed_tradeable = TradeableSerializer() 
-
-    class Meta:
-        model = Proposal
-        fields = ['id', 'proposer', 'proposed_tradeable', 'created_at'] 

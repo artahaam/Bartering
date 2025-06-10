@@ -1,29 +1,40 @@
 from django.db import models
-from barter.models import Offer
-# from accounts.models import 
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _ 
+from django.utils.translation import gettext_lazy as _
+from barter.models import Offer
 
 class Comment(models.Model):
+
+    offer = models.ForeignKey(
+        Offer,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
     
+
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    text = models.TextField()
+
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
-        verbose_name = _('نظر')
-        db_table = 'comments'
-        managed = False
-    
-    author_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                  on_delete=models.CASCADE,
-                                  verbose_name=_('نویسنده'),
-                                  db_column='author_id',
-                                  )
-    
-    parent_id = models.ForeignKey("self",
-                                  null=True,
-                                  blank=True,
-                                  on_delete=models.CASCADE,
-                                  verbose_name=_(''),
-                                  db_column='parent_id',
-                                  )
-    
-    text = models.TextField(_('متن'))
-    created_at = models.DateTimeField(_('ساخته شده در'), auto_now_add=True)
+        ordering = ['created_at']
+        verbose_name = _('Comment')
+        verbose_name_plural = _('Comments')
+
+    def __str__(self):
+        return f'Comment by {self.author} on offer {self.offer.id}'
