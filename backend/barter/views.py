@@ -6,6 +6,8 @@ from .serializers import OfferSerializer, TradeableSerializer, ProposalCreateSer
 from .permissions import IsOwnerOrReadOnly
 from .filters import OfferFilter
 from .models import Tradeable, Offer, Proposal
+from comments.models import Comment  
+from comments.serializers import CommentSerializer
 
 class TradeableViewSet(viewsets.ModelViewSet):
     queryset = Tradeable.objects.all()
@@ -50,7 +52,23 @@ class OfferViewSet(viewsets.ModelViewSet):
         read_serializer = ProposalDetailSerializer(new_proposal, context={'request': request})
         return Response(read_serializer.data, status=status.HTTP_201_CREATED)
 
+    @action(detail=True, methods=['get', 'post'], permission_classes=[permissions.IsAuthenticatedOrReadOnly])
+    def comments(self, request, pk=None):
 
+        offer = self.get_object() 
+
+        if request.method == 'POST':
+  
+            serializer = CommentSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(author=request.user, offer=offer)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        comments = offer.comments.filter(parent__isnull=True) 
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    
+    
     
 class ProposalViewSet(viewsets.ReadOnlyModelViewSet):
 
