@@ -37,4 +37,4 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'{self.score}-star rating by {self.rater} for {self.rated_user} on offer {self.offer.id}'
-    
+

@@ -8,6 +8,7 @@ from .filters import OfferFilter
 from .models import Tradeable, Offer, Proposal
 from comments.models import Comment  
 from comments.serializers import CommentSerializer
+from ratings.serializers import RatingSerializer
 
 class TradeableViewSet(viewsets.ModelViewSet):
     queryset = Tradeable.objects.all()
@@ -67,9 +68,46 @@ class OfferViewSet(viewsets.ModelViewSet):
         comments = offer.comments.filter(parent__isnull=True) 
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-    
-    
-    
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def rate(self, request, pk=None):
+        offer = self.get_object()
+        
+        try:
+            accepted_offer = offer.proposals.get(status=Proposal.Status.ACCEPTED)
+            proposer = accepted_offer.proposer
+            owner = offer.owner
+        except Proposal.DoesNotExist:
+            return Response(
+                {'detail': 'This offer was not completed via an accepted proposal.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        rater = request.user
+        
+        if rater == owner:
+            rated_user = proposer 
+        elif rater == proposer:
+            rated_user = owner
+        else:
+            return Response(
+                            {'detail': 'You should be either the owner or the proposer to rate this offer.'},
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+
+        context = {
+            'rater': rater,
+            'rated_user': rated_user,
+            'offer': offer
+        }
+        
+        serializer = RatingSerializer(data=request.data, context=context)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class ProposalViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Proposal.objects.all()
