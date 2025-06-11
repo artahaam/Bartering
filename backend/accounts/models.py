@@ -84,5 +84,5 @@ class User(AbstractUser):
         return f'{self.phone_number}'
     
     USERNAME_FIELD = "phone_number"
-    
+    REQUIRED_FIELDS = ['student_id']
     objects = UserManager()

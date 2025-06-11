@@ -13,7 +13,6 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ("phone_number", "first_name", "last_name", "username", "is_active", "is_staff", "is_superuser")
 
     def save(self, commit=True):
-        # Ensure the password is hashed using set_password
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
@@ -37,29 +36,24 @@ class CustomUserAdmin(BaseUserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
-    # Fields to display in the admin list view
     list_display = ("phone_number", "full_name", "is_staff", "is_active")
     list_filter = ("is_staff", "is_superuser", "is_active")
     search_fields = ("phone_number", "first_name", "last_name", "username")
     ordering = ("phone_number",)
 
-    # Fields for editing an existing user
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name", "username")}),
+        ("Personal info", {"fields": ("student_id", "first_name", "last_name", "username")}),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
     )
 
-    # Fields for creating a new user
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("phone_number", "password1", "password2", "first_name", "last_name", "username", "is_active", "is_staff", "is_superuser"),
+            "fields": ("phone_number", "password1", "password2", "student_id", "first_name", "last_name", "username", "is_active", "is_staff", "is_superuser"),
         }),
     )
 
-    # Ensure phone_number is used as the USERNAME_FIELD
     filter_horizontal = ()
 
-# Register the User model with the custom UserAdmin
 admin.site.register(User, CustomUserAdmin)

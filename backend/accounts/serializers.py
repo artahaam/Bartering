@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
+from django.db.models import Avg 
 User = get_user_model()
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -10,14 +10,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = (
             'phone_number', 
             'password', 
-            'email', 
             'student_id', 
+            'email',
             'first_name', 
             'last_name'
         )
-        extra_kwargs = {'password': {'write_only': True}}
-        
-        
+        extra_kwargs = {'password': {'write_only': True},
+                        'email': {'required': False, 'allow_blank': True}}
+
+
     def create(self, validated_data):
         user = User.objects.create_user(
             phone_number=validated_data['phone_number'],
@@ -31,6 +32,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
         
         
 class UserProfileSerializer(serializers.ModelSerializer):
+
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -39,6 +43,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'student_id', 
             'first_name', 
             'last_name',
-            'full_name', 
+            'full_name',
+            'average_rating',
+             
         ]
         read_only_fields = ['phone_number', 'student_id', 'full_name']
+        
+        
+    def get_average_rating(self, obj):
+        avg = obj.received_ratings.aggregate(Avg('score')).get('score__avg')
+
+        if avg is None:
+            return "Not Rated Yet!"
+        
+        return round(avg, 1)
