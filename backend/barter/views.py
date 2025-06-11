@@ -17,7 +17,8 @@ class TradeableViewSet(viewsets.ModelViewSet):
     
 
 class OfferViewSet(viewsets.ModelViewSet):
-    queryset = Offer.objects.filter(status='open').order_by('-created_at')
+    # queryset = Offer.objects.filter(status='open').order_by('-created_at')
+    queryset = Offer.objects.all().order_by('-status')
     serializer_class = OfferSerializer
     permission_classes = [IsOwnerOrReadOnly]
     filterset_class = OfferFilter
@@ -118,10 +119,9 @@ class ProposalViewSet(viewsets.ReadOnlyModelViewSet):
     def accept(self, request, pk=None):
         proposal = self.get_object()
         offer = proposal.offer
-        
         if offer.owner != request.user:
             return Response(
-                {'detail': 'You do not have permission to perform this action.'},
+                {'detail': 'You are not the offer owner!.'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
