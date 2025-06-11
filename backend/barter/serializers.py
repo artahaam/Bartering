@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Proposal, Offer, Tradeable
 from accounts.models import User
+from comments.models import Comment
 from django.utils.translation import gettext_lazy as _ 
 
 
@@ -16,12 +17,13 @@ class TradeableSerializer(serializers.ModelSerializer):
 
 
 class OfferSerializer(serializers.ModelSerializer):
-    # to_give = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
-    # to_get = serializers.PrimaryKeyRelatedField(queryset=Tradeable.objects.all(), write_only=True)
     to_give = TradeableSerializer()
     to_get = TradeableSerializer()
-    # to_give_details = TradeableSerializer(source='to_give', read_only=True)
-    # to_get_details = TradeableSerializer(source='to_get', read_only=True)
+    comments = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='text'
+     )
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Offer
@@ -33,8 +35,7 @@ class OfferSerializer(serializers.ModelSerializer):
             'description',
             'to_give',
             'to_get',
-            # 'to_give_details',
-            # 'to_get_details',
+            'comments',
             'created_at',
         ]
     def create(self, validated_data):
