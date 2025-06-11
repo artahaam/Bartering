@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'accounts',
     'barter',
     'comments',
+    'ratings',
+    
     
     
 ]
