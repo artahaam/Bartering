@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework.authtoken',
-    
+    'drf_spectacular',
+
     # apps
     'accounts',
     'barter',
@@ -172,9 +173,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-# settings.py
 
 # Add your React app's URL to allowed hosts
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-react-app-domain.com']
@@ -190,3 +191,11 @@ CORS_ALLOW_CREDENTIALS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Student Bartering Platform API',
+    'DESCRIPTION': 'Testing API documentation for the bartering platform project.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
