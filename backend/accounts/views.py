@@ -22,7 +22,7 @@ class LogoutView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     
-class UserProfileView(generics.RetrieveUpdateAPIView):
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
