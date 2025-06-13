@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action 
 from rest_framework.response import Response
 from .serializers import OfferSerializer, TradeableSerializer, ProposalCreateSerializer, ProposalDetailSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsProposer
 from .filters import OfferFilter
 from .models import Tradeable, Offer, Proposal
 from comments.models import Comment  
@@ -165,10 +165,20 @@ class ProposalViewSet(viewsets.ReadOnlyModelViewSet):
         proposal.save()
 
         return Response({'status': 'proposal declined'})
+    
 
-# class OfferViewSet(viewsets.ModelViewSet):
-#     queryset = Offer.objects.all()
-#     # serializer_class = OfferSerializer # Keep this as default for standard actions
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    @action(methods=['post',],detail=True, permission_classes=[IsProposer])
+    def cancel(self, request, pk=None):
+
+        proposal = self.get_object()
+
+        if proposal.status != Proposal.Status.PENDING:
+            return Response(
+                {'detail': 'You can only cancel a pending proposal.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        proposal.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
