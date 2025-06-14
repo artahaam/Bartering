@@ -1,0 +1,1204 @@
+openapi: 3.0.3
+info:
+  title: Student Bartering Platform API
+  version: 1.0.0
+  description: Testing API documentation for the bartering platform project.
+paths:
+  /api/accounts/login/:
+    post:
+      operationId: api_accounts_login_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/accounts/logout/:
+    post:
+      operationId: api_accounts_logout_create
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/accounts/me/:
+    get:
+      operationId: api_accounts_me_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    put:
+      operationId: api_accounts_me_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: api_accounts_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    delete:
+      operationId: api_accounts_me_destroy
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/accounts/register/:
+    post:
+      operationId: api_accounts_register_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+  /api/accounts/users/:
+    get:
+      operationId: api_accounts_users_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserProfileList'
+          description: ''
+  /api/accounts/users/{id}/:
+    get:
+      operationId: api_accounts_users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this کاربر.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/barter/offers/:
+    get:
+      operationId: api_barter_offers_list
+      parameters:
+      - in: query
+        name: offered_by_id
+        schema:
+          type: number
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: وضعیت
+          enum:
+          - closed
+          - done
+          - open
+        description: |-
+          * `open` - فعال
+          * `done` - انجام شده
+          * `closed` - غیرفعال
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: to_get_id
+        schema:
+          type: integer
+      - in: query
+        name: to_give_id
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOfferList'
+          description: ''
+    post:
+      operationId: api_barter_offers_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Offer'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+  /api/barter/offers/{id}/:
+    get:
+      operationId: api_barter_offers_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+    put:
+      operationId: api_barter_offers_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Offer'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+    patch:
+      operationId: api_barter_offers_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOffer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOffer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOffer'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+    delete:
+      operationId: api_barter_offers_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/barter/offers/{id}/comments/:
+    get:
+      operationId: api_barter_offers_comments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+    post:
+      operationId: api_barter_offers_comments_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Offer'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+  /api/barter/offers/{id}/proposals/:
+    get:
+      operationId: api_barter_offers_proposals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+  /api/barter/offers/{id}/propose/:
+    post:
+      operationId: api_barter_offers_propose_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Offer'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+  /api/barter/offers/{id}/rate/:
+    post:
+      operationId: api_barter_offers_rate_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Offer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Offer'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+          description: ''
+  /api/barter/proposals/:
+    get:
+      operationId: api_barter_proposals_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProposalDetailList'
+          description: ''
+  /api/barter/proposals/{id}/:
+    get:
+      operationId: api_barter_proposals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this پیشنهاد آگهی.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalDetail'
+          description: ''
+  /api/barter/proposals/{id}/accept/:
+    post:
+      operationId: api_barter_proposals_accept_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this پیشنهاد آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalDetail'
+          description: ''
+  /api/barter/proposals/{id}/cancel/:
+    post:
+      operationId: api_barter_proposals_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this پیشنهاد آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalDetail'
+          description: ''
+  /api/barter/proposals/{id}/decline/:
+    post:
+      operationId: api_barter_proposals_decline_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this پیشنهاد آگهی.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProposalDetail'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProposalDetail'
+          description: ''
+  /api/comments/{id}/:
+    get:
+      operationId: api_comments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Comment.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    put:
+      operationId: api_comments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Comment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    patch:
+      operationId: api_comments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Comment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    delete:
+      operationId: api_comments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Comment.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          title: نام‌کاربری
+        password:
+          type: string
+          writeOnly: true
+          title: گذرواژه
+        token:
+          type: string
+          readOnly: true
+          title: توکن
+      required:
+      - password
+      - token
+      - username
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        parent:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reply'
+          readOnly: true
+      required:
+      - author
+      - created_at
+      - id
+      - replies
+      - text
+    Offer:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OfferStatusEnum'
+          title: وضعیت
+        title:
+          type: string
+          title: عنوان
+          maxLength: 120
+        description:
+          type: string
+          title: توضیحات
+        to_give:
+          $ref: '#/components/schemas/Tradeable'
+        to_get:
+          $ref: '#/components/schemas/Tradeable'
+        comments:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: ایجاد شده در
+      required:
+      - comments
+      - created_at
+      - description
+      - id
+      - owner
+      - title
+      - to_get
+      - to_give
+    OfferStatusEnum:
+      enum:
+      - open
+      - done
+      - closed
+      type: string
+      description: |-
+        * `open` - فعال
+        * `done` - انجام شده
+        * `closed` - غیرفعال
+    PaginatedOfferList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Offer'
+    PaginatedProposalDetailList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProposalDetail'
+    PaginatedUserProfileList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserProfile'
+    PatchedComment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        parent:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reply'
+          readOnly: true
+    PatchedOffer:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OfferStatusEnum'
+          title: وضعیت
+        title:
+          type: string
+          title: عنوان
+          maxLength: 120
+        description:
+          type: string
+          title: توضیحات
+        to_give:
+          $ref: '#/components/schemas/Tradeable'
+        to_get:
+          $ref: '#/components/schemas/Tradeable'
+        comments:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: ایجاد شده در
+    PatchedUserProfile:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          readOnly: true
+          title: شماره تلفن
+        email:
+          type: string
+          format: email
+          title: آدرس ایمیل
+          maxLength: 254
+        student_id:
+          type: string
+          readOnly: true
+          title: شماره دانشجویی
+          description: الزامی است، شروع با 40
+        first_name:
+          type: string
+          title: نام
+          maxLength: 150
+        last_name:
+          type: string
+          title: نام خانوادگی
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
+    ProposalDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        offer:
+          type: string
+          format: uri
+          readOnly: true
+        proposer:
+          type: string
+          format: uri
+          readOnly: true
+        proposed_tradeable:
+          allOf:
+          - $ref: '#/components/schemas/Tradeable'
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ProposalDetailStatusEnum'
+          title: وضعیت
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: ایجاد شده در
+      required:
+      - created_at
+      - id
+      - offer
+      - proposed_tradeable
+      - proposer
+    ProposalDetailStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - declined
+      type: string
+      description: |-
+        * `pending` - انتظار
+        * `accepted` - پذیرفته شده
+        * `declined` - رد شده
+    Reply:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author
+      - created_at
+      - id
+      - text
+    Tradeable:
+      type: object
+      properties:
+        name:
+          type: string
+          title: نام
+          maxLength: 100
+        description:
+          type: string
+          title: توضیحات
+        type:
+          allOf:
+          - $ref: '#/components/schemas/TypeEnum'
+          title: کالا
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: عکس
+      required:
+      - name
+    TypeEnum:
+      enum:
+      - item
+      - service
+      type: string
+      description: |-
+        * `item` - کالا
+        * `service` - خدمات
+    UserCreate:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          title: شماره تلفن
+          pattern: ^09\d{9}$
+          maxLength: 13
+        password:
+          type: string
+          writeOnly: true
+          title: گذرواژه
+          maxLength: 128
+        student_id:
+          type: string
+          title: شماره دانشجویی
+          description: الزامی است، شروع با 40
+          pattern: ^40\d{7}$
+          maxLength: 9
+        email:
+          type: string
+          format: email
+          title: آدرس ایمیل
+          maxLength: 254
+        first_name:
+          type: string
+          title: نام
+          maxLength: 150
+        last_name:
+          type: string
+          title: نام خانوادگی
+          maxLength: 150
+      required:
+      - password
+      - phone_number
+      - student_id
+    UserProfile:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          readOnly: true
+          title: شماره تلفن
+        email:
+          type: string
+          format: email
+          title: آدرس ایمیل
+          maxLength: 254
+        student_id:
+          type: string
+          readOnly: true
+          title: شماره دانشجویی
+          description: الزامی است، شروع با 40
+        first_name:
+          type: string
+          title: نام
+          maxLength: 150
+        last_name:
+          type: string
+          title: نام خانوادگی
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
+      required:
+      - average_rating
+      - full_name
+      - phone_number
+      - student_id
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

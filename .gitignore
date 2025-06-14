@@ -11,6 +11,14 @@ directory.txt
 package-lock.json
 package.json
 backend/media/
+Bartering/
+database.sql
+ERDiagram.png
+schecma.pdf
+test.py
+
+
+
 
 .venv/
 .perfume-online-shop/
