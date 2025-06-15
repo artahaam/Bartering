@@ -91,6 +91,7 @@ class Proposal(models.Model):
     
     proposer = models.ForeignKey(settings.AUTH_USER_MODEL,
                                     on_delete=models.CASCADE,
+                                    related_name="proposals",
                                     verbose_name=_('متقاضی'),
                                     )
     

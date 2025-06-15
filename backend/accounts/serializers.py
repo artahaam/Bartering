@@ -34,20 +34,26 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
 
     average_rating = serializers.SerializerMethodField()
-
+    offers = serializers.HyperlinkedIdentityField(
+        view_name='accounts:user-offers',
+        lookup_field='pk',
+        lookup_url_kwarg='pk'
+    )
     class Meta:
         model = User
         fields = [
+            'id',
             'phone_number', 
             'email', 
             'student_id', 
             'first_name', 
             'last_name',
             'full_name',
+            'offers',
             'average_rating',
              
         ]
-        read_only_fields = ['phone_number', 'student_id', 'full_name']
+    read_only_fields = ['phone_number', 'student_id', 'full_name', 'average_rating']
         
         
     def get_average_rating(self, obj):
@@ -57,3 +63,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return "Not Rated Yet!"
         
         return round(avg, 1)
+    
+class MyProfileSerializer(UserProfileSerializer):
+
+    proposals = serializers.HyperlinkedIdentityField(
+        view_name='accounts:user-proposals',
+        lookup_field='pk',
+        lookup_url_kwarg='pk'
+    )
+
+    class Meta(UserProfileSerializer.Meta):
+        fields = UserProfileSerializer.Meta.fields + ['proposals']
