@@ -182,7 +182,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-react-app-domain.com']
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # Default React dev server
+    "http://localhost:3000",  # Default React dev server
     "https://your-react-app-domain.com",
 ]
 
