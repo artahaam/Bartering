@@ -24,7 +24,7 @@ class OfferSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='text'
      )
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    owner = serializers.HyperlinkedRelatedField(view_name='accounts:user-detail', read_only=True)
     class Meta:
         model = Offer
         fields = [
