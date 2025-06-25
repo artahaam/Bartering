@@ -6,7 +6,7 @@ bartering_data2.sql
 database_schema.sql
 database_schema copy.sql
 node_modules/
-frontend/
+# frontend
 directory.txt
 package-lock.json
 package.json
@@ -17,7 +17,12 @@ ERDiagram.png
 schecma.pdf
 test.py
 
-
+jsconfig.json
+next.config.mjs
+tailwind.config.js
+README.md
+postcss.config.js
+eslint.config.mjs
 
 
 .venv/
