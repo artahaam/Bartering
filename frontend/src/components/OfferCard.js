@@ -87,7 +87,7 @@ export default function OfferCard({ offer, isOwner = false, onDeleted }) {
       {/* <p className="text-xs text-right mt-1 text-gray-400">وضعیت: {offer.status}</p> */}
 
       <div className="flex justify-end gap-4 mt-4 text-sm">
-        <Link href={`/edit-offer/${offer.id}`} className="text-indigo-700 hover:underline">مشاهده</Link>
+        <Link href={`/offer/${offer.id}`} className="text-indigo-700 hover:underline">مشاهده</Link>
         {isOwner && (
           <>
           {/* <Link href={`/offer/${offer.id}`} className="text-indigo-600 hover:underline">مشاهده</Link> */}
