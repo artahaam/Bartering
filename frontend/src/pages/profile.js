@@ -133,23 +133,7 @@ export default function ProfilePage() {
       </div>
 
       {/* 📦 User Offers Section */}
-      <div className="max-w-4xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded font-sahel">
-        <h3 className="text-xl font-bold mb-4 text-right">آگهی‌های من</h3>
-        {offers.length === 0 ? (
-          <p className="text-right">🎯 هنوز آگهی‌ای ثبت نکرده‌اید.</p>
-        ) : (
-          <div className="space-y-4">
-            {offers.map((offer) => (
-              <OfferCard
-                key={offer.id}
-                offer={offer}
-                isOwner={true}
-                onDeleted={handleDeleteOffer}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      
     </>
   );
 }
