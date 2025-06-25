@@ -15,9 +15,10 @@ export default function MyOffersPage() {
 
         // ✅ Use URL to their offers (e.g. '/api/accounts/users/11/offers/')
         const offersUrl = me.data.offers;
-
-        const offerRes = await api.get(offersUrl);
-        setOffers(Array.isArray(offerRes.data) ? offerRes.data : offerRes.data.results || []);
+        // const offerRes = await api.get(offersUrl);
+        const orderedOffersUrl = `${offersUrl}?ordering=created_at`;
+        const orderedOfferRes = await api.get(orderedOffersUrl);
+        setOffers(Array.isArray(orderedOfferRes.data) ? orderedOfferRes.data : orderedOfferRes.data.results || []);
       } catch (err) {
         console.warn(err);
         alert('خطا در دریافت آگهی‌های شما ❌');
