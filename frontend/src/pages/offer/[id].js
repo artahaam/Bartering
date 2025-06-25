@@ -46,28 +46,28 @@ export default function OfferDetailPage() {
     }));
   };
 
-const handlePropose = async (e) => {
-  e.preventDefault();
-  setProposing(true);
+  const handlePropose = async (e) => {
+    e.preventDefault();
+    setProposing(true);
 
-  try {
-    const payload = {
-      proposed_tradeable: {
-        ...proposal.proposed_tradeable,
-      },
-    };
+    try {
+      const payload = {
+        proposed_tradeable: {
+          ...proposal.proposed_tradeable,
+        },
+      };
 
-    await api.post(`/barter/offers/${id}/propose/`, payload);
+      await api.post(`/barter/offers/${id}/propose/`, payload);
 
-    alert('✅ پیشنهاد شما ثبت شد');
-    router.push('/profile'); // future route
-  } catch (err) {
-    console.error('❌ Proposal failed:', err.response?.data || err.message);
-    alert('❌ ارسال پیشنهاد با شکست مواجه شد:\n' + JSON.stringify(err.response?.data || '', null, 2));
-  } finally {
-    setProposing(false);
-  }
-};
+      alert('✅ پیشنهاد شما ثبت شد');
+      router.push('/profile'); // future route
+    } catch (err) {
+      console.error('❌ Proposal failed:', err.response?.data || err.message);
+      alert('❌ ارسال پیشنهاد با شکست مواجه شد:\n' + JSON.stringify(err.response?.data || '', null, 2));
+    } finally {
+      setProposing(false);
+    }
+  };
 
   if (!offer) return <p className="p-10 font-sahel">در حال بارگذاری...</p>;
 
@@ -93,7 +93,7 @@ const handlePropose = async (e) => {
             <p>🧾 {offer.to_get.type === 'item' ? 'کالا' : 'خدمت'}</p>
           </div>
         </div>
-
+        
         {!isOwner && (
           <form onSubmit={handlePropose} className="border-t pt-6 mt-6">
             <h3 className="text-lg font-bold mb-4">🧾 ارسال پیشنهاد</h3>
@@ -132,10 +132,19 @@ const handlePropose = async (e) => {
             </button>
           </form>
         )}
-{/* 
+
+        {/* --- NEW: Added button to edit the offer for the owner --- */}
         {isOwner && (
-          <p className="text-sm text-gray-500 mt-6">این آگهی متعلق به شما است — نمی‌توانید پیشنهادی ارسال کنید.</p>
-        )} */}
+          <div className="border-t pt-6 mt-6 text-right">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">این آگهی متعلق به شما است.</p>
+            <button
+              onClick={() => router.push(`/edit-offer/${id}/`)}
+              className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700"
+            >
+              ویرایش آگهی
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
