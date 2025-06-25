@@ -84,14 +84,14 @@ export default function OfferCard({ offer, isOwner = false, onDeleted }) {
 
       <h3 className="text-lg font-bold mt-1">{offer.title}</h3>
       <p className="text-sm text-gray-600 mt-2">{offer.description}</p>
-      <p className="text-xs text-right mt-1 text-gray-400">وضعیت: {offer.status}</p>
+      {/* <p className="text-xs text-right mt-1 text-gray-400">وضعیت: {offer.status}</p> */}
 
       <div className="flex justify-end gap-4 mt-4 text-sm">
-        <Link href={`/offer/${offer.id}`} className="text-indigo-600 hover:underline">مشاهده</Link>
+        <Link href={`/edit-offer/${offer.id}`} className="text-indigo-700 hover:underline">مشاهده</Link>
         {isOwner && (
           <>
-            <Link href={`/edit-offer/${offer.id}`} className="text-yellow-500 hover:underline">ویرایش</Link>
-            <button onClick={handleDelete} className="text-red-600 hover:underline">حذف</button>
+          {/* <Link href={`/offer/${offer.id}`} className="text-indigo-600 hover:underline">مشاهده</Link> */}
+            {/* <button onClick={handleDelete} className="text-red-600 hover:underline">حذف</button> */}
           </>
         )}
       </div>
