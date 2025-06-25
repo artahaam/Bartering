@@ -64,18 +64,43 @@ export default function EditOfferPage() {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  // FIXED: Changed from creating a new offer to updating the existing one.
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      // Use PATCH to update the offer with the specific ID
+      await api.patch(`/barter/offers/${id}/`, form);
+      alert('✅ تغییرات با موفقیت ذخیره شد');
+      router.push(`/offers/${id}`); // Redirect to the offer page after editing
+    } catch (err) {
+      console.error(err);
+      alert('❌ خطا در ذخیره تغییرات:\n' + JSON.stringify(err.response?.data || err.message));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-  try {
-    await api.post('/barter/offers/', form);
-    alert('✅ آگهی ارسال شد');
-    router.push('/');
-  } catch (err) {
-    console.error(err);
-    alert('❌ خطا:\n' + JSON.stringify(err.response?.data || err.message));
-  }
-};
+  // NEW: Function to handle deleting the offer.
+  const handleDelete = async () => {
+    // Confirm before deleting
+    if (!window.confirm('آیا از حذف این آگهی مطمئن هستید؟ این عمل غیرقابل بازگشت است.')) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await api.delete(`/barter/offers/${id}/`);
+      alert('✅ آگهی با موفقیت حذف شد');
+      router.push('/'); // Redirect to home page after deletion
+    } catch (err) {
+      console.error(err);
+      alert('❌ خطا در حذف آگهی:\n' + JSON.stringify(err.response?.data || err.message));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
 
   if (loading || !form) return <p className="p-10 font-sahel">در حال بارگذاری...</p>;
 
@@ -153,13 +178,24 @@ const handleSubmit = async (e) => {
             className="p-2 border rounded"
           />
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
-          >
-            {submitting ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
-          </button>
+          {/* --- NEW: Button container for Edit and Delete --- */}
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 disabled:bg-indigo-400"
+            >
+              {submitting ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+            </button>
+            <button
+              type="button" // Important: type="button" to prevent form submission
+              onClick={handleDelete}
+              disabled={submitting}
+              className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 disabled:bg-red-400"
+            >
+              {submitting ? '...' : 'حذف آگهی'}
+            </button>
+          </div>
         </form>
       </main>
     </>
