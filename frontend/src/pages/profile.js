@@ -115,13 +115,7 @@ export default function ProfilePage() {
           />
         </form>
 
-        <button
-          type="submit"
-          onClick={handleUpdate}
-          className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
-        >
-          ذخیره تغییرات
-        </button>
+
 
         <div className="mt-8 text-right">
           <h3 className="font-bold text-lg mb-2">امتیاز شما:</h3>
@@ -130,6 +124,14 @@ export default function ProfilePage() {
             {profile.average_rating || "بدون امتیاز"}
           </p>
         </div>
+          <br></br>
+          <button
+            type="submit"
+            onClick={handleUpdate}
+            className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700"
+          >
+            ذخیره تغییرات
+          </button>
       </div>
 
       {/* 📦 User Offers Section */}
